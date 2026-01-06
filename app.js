@@ -3,6 +3,7 @@ const cors = require('cors');
 const Mongoose = require('mongoose');
 const Session = require('express-session');
 const AuthRouter = require('./routes/AuthRouter');
+const DoctorRouter = require('./routes/DoctorRouter')
 const CompressRouter = require('./routes/CompressRouter');
 require("./services/compressorService");
 require('./services/heatTherapy')
@@ -33,7 +34,7 @@ Mongoose.connect(process.env.MongoDBURI)
         console.log("Error in connecting to MongoDB:", err);
     })
 
-const store = new MongoDbSession({ 
+const store = new MongoDbSession({
     uri: process.env.MongoDBURI,
     collection: 'sessions'
 })
@@ -47,4 +48,5 @@ app.use(Session({
 }))
 
 app.use(AuthRouter)
+app.use(DoctorRouter)
 app.use(CompressRouter)

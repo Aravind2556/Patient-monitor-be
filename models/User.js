@@ -7,6 +7,7 @@ const userSchema = mongoose.Schema({
     contact: { type: Number, required: true, validate: { validator: v => /^\d{10}$/.test(v), message: 'Contact must be a 10-digit number.' } },
     role: { type: String, enum: ['doctor', 'patient'], required: true, default: 'patient' },
     age: { type: Number },
+    gender: { type: String, enum: ['male', 'female', 'other'] },
     password: { type: String, required: true }
 })
 
