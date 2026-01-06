@@ -1,13 +1,17 @@
 const mongoose = require('mongoose')
 
-const thinkSpeakSchema = mongoose.Schema({
+const compressionSchema = mongoose.Schema({
     id: { type: Number},
-    tempeatrue: { type: Number},
-    airPressure: { type: Number },
-    heartRate: { type: Number },
-    spo2: { type: Number },
-    deviseId: { type: Number}
+    patientId: { type: String },
+    entries: [{
+        temperature: { type: Number },
+        airPressure: { type: Number },
+        heartRate: { type: Number },
+        spo2: { type: Number },
+    }]
+}, {
+    timestamps: true
 })
 
-const thinkSpeakModel = mongoose.model('think-speak', thinkSpeakSchema)
+const thinkSpeakModel = mongoose.model('compression-data', thinkSpeakSchema)
 module.exports = thinkSpeakModel
