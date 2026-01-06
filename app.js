@@ -23,7 +23,7 @@ app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`); 
 })
 
 Mongoose.connect(process.env.MongoDBURI)
