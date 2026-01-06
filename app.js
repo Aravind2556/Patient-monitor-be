@@ -4,6 +4,9 @@ const Mongoose = require('mongoose');
 const Session = require('express-session');
 const AuthRouter = require('./routes/AuthRouter');
 const CompressRouter = require('./routes/CompressRouter');
+require("./services/compressorService");
+require('./services/heatTherapy')
+require('./services/vibration')
 
 const MongoDbSession = require('connect-mongodb-session')(Session);
 require('dotenv').config();
