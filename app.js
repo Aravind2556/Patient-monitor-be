@@ -3,6 +3,8 @@ const cors = require('cors');
 const Mongoose = require('mongoose');
 const Session = require('express-session');
 const AuthRouter = require('./routes/AuthRouter');
+const CompressRouter = require('./routes/CompressRouter');
+
 const MongoDbSession = require('connect-mongodb-session')(Session);
 require('dotenv').config();
 
@@ -42,3 +44,4 @@ app.use(Session({
 }))
 
 app.use(AuthRouter)
+app.use(CompressRouter)
