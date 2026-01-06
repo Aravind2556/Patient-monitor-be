@@ -28,7 +28,7 @@ Mongoose.connect(process.env.MongoDBURI)
         console.log("Error in connecting to MongoDB:", err);
     })
 
-const store = new MongoDbSession({
+const store = new MongoDbSession({ 
     uri: process.env.MongoDBURI,
     collection: 'sessions'
 })
