@@ -45,12 +45,12 @@ AuthRouter.post('/login', async (req, res) => {
 })
 
 
-AuthRouter.post('/register', async (req, res) => {
-    try {
-        const { fullname, email, contact, password, age, gender } = req.body
+AuthRouter.post('/register', async (req, res)=>{
+    try{
+        const {fullname, email, contact, password, age, gender} = req.body
 
-        if (!fullname || !email || !contact || !password) {
-            return res.send({ success: false, message: 'Please provide all details!' })
+        if(!fullname || !email || !contact || !password ){
+            return res.send({success: false, message: 'Please provide all details!'})
         }
 
         const fetchUser = await UserModel.findOne({ email: email.toLowerCase() })
@@ -66,17 +66,32 @@ AuthRouter.post('/register', async (req, res) => {
         } else {
             userId = 1
         }
-
-        const newUser = new UserModel({
+        
+        let tempUser = {
             id: userId,
             fullname: fullname,
             email: email,
             contact: contact,
-            password: password,
-            age: age && age,
-            gender: gender && gender,
-            role: 'patient'
-        })
+            password: password
+        }
+
+        if(age){
+            if (typeof age === 'number') {
+                tempUser.age = age
+            }
+            else if (age.match(/^\d+(\.\d+)?$/)) {
+                tempUser.age = parseFloat(age)
+            }
+            else {
+                return res.send({ success: false, message: 'Age must be a number.' })
+            }
+        }
+
+        if(gender && ['male', 'female', 'other'].includes(gender.toLowerCase().trim())){
+            tempUser.gender = gender.toLowerCase().trim()
+        }
+
+        const newUser = new UserModel(tempUser)
 
         const saveUser = await newUser.save()
 
