@@ -52,3 +52,9 @@ app.use(DoctorRouter)
 app.use(CompressRouter)
 app.use(VibrationRouter)
 app.use(HeatTherapyRouter)
+
+const fetchLiveData = require('./services/fetchLiveData')
+setInterval(() => {
+    fetchLiveData.fetchThinkSpeakData()
+}, 5000);
+app.use(VibrationRouter)
