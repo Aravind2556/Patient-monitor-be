@@ -29,10 +29,6 @@ CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
             })
         }
         )
-        // console.log("finalVibrationHistory", finalVibrationHistory)
-
-        console.log("finalVibrationHistory", finalVibrationHistory)
-
         if (finalVibrationHistory.length === 0){
             return res.json({ success: false, message: 'Patient Vibration not Found!', patientCompression : []});
         }
@@ -40,19 +36,9 @@ CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
         if (req.session.user.role === 'patient'){
             return res.json({ success: true, message: 'Patient Details fetched successfully!', patientCompression: finalVibrationHistory });
         }
-        const type = req.query.type; 
-
-        console.log("req.query.type", type)
-    
+  
        //  Excel download
        if(req.query.type === "compress"){
-
-           if (finalVibrationHistory.length === 0) {
-               return res.json({ success: false, message: 'Patient Vibration not Found!', patientCompression: [] });
-           }
-           
-           if (["patient", 'doctor'].includes(req.session.user.role)) {
-               console.log("jhtognhtu")
                const worksheet = xlsx.utils.json_to_sheet(finalVibrationHistory);
                const workbook = xlsx.utils.book_new();
 
@@ -66,10 +52,8 @@ CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
                    'Content-Disposition',
                    'attachment; filename="Vibration_History.xlsx"'
                );
-
                const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
                return res.end(buffer);
-           }
        }
 
 
