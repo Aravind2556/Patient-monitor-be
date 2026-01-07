@@ -47,7 +47,7 @@ AuthRouter.post('/login', async (req, res) => {
 
 AuthRouter.post('/register', async (req, res)=>{
     try{
-        const {fullname, email, contact, password, age, gender} = req.body
+        const {fullname, email, contact, password, age, gender, type} = req.body
 
         if(!fullname || !email || !contact || !password ){
             return res.send({success: false, message: 'Please provide all details!'})
@@ -95,7 +95,7 @@ AuthRouter.post('/register', async (req, res)=>{
 
         const saveUser = await newUser.save()
 
-        if (saveUser) {
+        if (saveUser && type !== 'create') {
 
             req.session.user = {
                 objId: saveUser._id,
@@ -114,6 +114,9 @@ AuthRouter.post('/register', async (req, res)=>{
                 return res.send({ success: true, message: "Patient Registration successfully!", user: req.session.user })
             })
 
+        }
+        else if (saveUser && type === 'create'){
+            return res.send({ success: true, message: 'User created Successfully!' })
         }
         else {
             return res.send({ success: false, message: 'Failed to create User!' })

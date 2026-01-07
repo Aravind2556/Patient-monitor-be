@@ -14,7 +14,7 @@ HeatTherapyRouter.get("/fetchheattherapy/:id", async (req, res) => {
 
         const finalHeatHistory = heatTherapySessions.map((session) => {
             const duration = Math.floor(
-                (new Date(session.updatedAt) - new Date(session.createdAt)) / (1000 * 60)
+                (new Date(session.closedAt) - new Date(session.createdAt)) / (1000 * 60)
             );
 
             const totalTemp = session.entries.reduce(
