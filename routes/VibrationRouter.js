@@ -18,7 +18,7 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
         // console.log("fetchVibrationDetail", fetchVibrationDetail)
         let finalVibrationHistory = fetchVibrationDetail.map(vibration => {
             const duration = Math.floor(
-                (new Date(vibration.updatedAt) - new Date(vibration.createdAt)) / (1000 * 60))
+                (new Date(vibration.closedAt) - new Date(vibration.createdAt)) / (1000 * 60))
 
             // calculate average temperature safely
             const totalTemp = vibration.entries.reduce(
@@ -31,7 +31,7 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
             // console.log("avgTemp", avgTemp)
             return ({
                 SessionId: vibration.id,
-                Date: vibration.updatedAt,
+                Date: vibration.closedAt,
                 Duration: duration,
                 AverageTemp: avgTemp
             })

@@ -1,16 +1,17 @@
 const express = require("express");
 const fetch = require("node-fetch");
 const Compression = require("../models/Compression");
+const xlsx = require("xlsx");
 
 const CompressRouter = express.Router();
 
 CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
     try {
         const patientId = req.params.id
-        const fetchVibrationDetail = await Compression.find({ patientId})
+        const fetchVibrationDetail = await Compression.find({ patientId })
         let finalVibrationHistory = fetchVibrationDetail.map(vibration => {
             const duration = Math.floor(
-                (new Date(vibration.updatedAt) - new Date(vibration.createdAt)) / (1000 * 60))
+                (new Date(vibration.closedAt) - new Date(vibration.createdAt)) / (1000 * 60))
 
             // calculate average temperature safely
             const totalTemp = vibration.entries.reduce(
@@ -23,38 +24,38 @@ CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
             // console.log("avgTemp", avgTemp)
             return ({
                 SessionId: vibration.id,
-                Date: vibration.updatedAt,
+                Date: vibration.closedAt,
                 Duration: duration,
                 AverageTemp: avgTemp
             })
         }
         )
-        if (finalVibrationHistory.length === 0){
-            return res.json({ success: false, message: 'Patient Vibration not Found!', patientCompression : []});
+        if (finalVibrationHistory.length === 0) {
+            return res.json({ success: false, message: 'Patient Vibration not Found!', patientCompression: [] });
         }
-           
-        if (req.session.user.role === 'patient'){
+
+        if (req.session.user.role === 'patient') {
             return res.json({ success: true, message: 'Patient Details fetched successfully!', patientCompression: finalVibrationHistory });
         }
-  
-       //  Excel download
-       if(req.query.type === "compress"){
-               const worksheet = xlsx.utils.json_to_sheet(finalVibrationHistory);
-               const workbook = xlsx.utils.book_new();
 
-               xlsx.utils.book_append_sheet(workbook, worksheet, 'Compression History');
+        //  Excel download
+        if ((req.query.type === "compress" && req.query.isDownload === true) || req.session.user.role === 'doctor') {
+            const worksheet = xlsx.utils.json_to_sheet(finalVibrationHistory);
+            const workbook = xlsx.utils.book_new();
 
-               res.setHeader(
-                   'Content-Type',
-                   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-               );
-               res.setHeader(
-                   'Content-Disposition',
-                   'attachment; filename="Vibration_History.xlsx"'
-               );
-               const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-               return res.end(buffer);
-       }
+            xlsx.utils.book_append_sheet(workbook, worksheet, 'Compression History');
+
+            res.setHeader(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            );
+            res.setHeader(
+                'Content-Disposition',
+                'attachment; filename="Compression_History.xlsx"'
+            );
+            const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+            return res.end(buffer);
+        }
 
 
     }
