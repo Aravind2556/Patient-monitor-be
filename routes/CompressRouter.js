@@ -31,31 +31,47 @@ CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
         )
         // console.log("finalVibrationHistory", finalVibrationHistory)
 
-        if (!finalVibrationHistory)
-            return res.json({ success: false, message: 'Patient Vibration not Found!' });
+        console.log("finalVibrationHistory", finalVibrationHistory)
 
-        if (req.session.user.role === 'patient')
+        if (finalVibrationHistory.length === 0){
+            return res.json({ success: false, message: 'Patient Vibration not Found!', patientCompression : []});
+        }
+           
+        if (req.session.user.role === 'patient'){
             return res.json({ success: true, message: 'Patient Details fetched successfully!', patientCompression: finalVibrationHistory });
+        }
+        const type = req.query.type; 
 
+        console.log("req.query.type", type)
+    
+       //  Excel download
+       if(req.query.type === "compress"){
 
-        //  Excel download
+           if (finalVibrationHistory.length === 0) {
+               return res.json({ success: false, message: 'Patient Vibration not Found!', patientCompression: [] });
+           }
+           
+           if (["patient", 'doctor'].includes(req.session.user.role)) {
+               console.log("jhtognhtu")
+               const worksheet = xlsx.utils.json_to_sheet(finalVibrationHistory);
+               const workbook = xlsx.utils.book_new();
 
-        const worksheet = xlsx.utils.json_to_sheet(finalVibrationHistory);
-        const workbook = xlsx.utils.book_new();
+               xlsx.utils.book_append_sheet(workbook, worksheet, 'Compression History');
 
-        xlsx.utils.book_append_sheet(workbook, worksheet, 'Vibration History');
+               res.setHeader(
+                   'Content-Type',
+                   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+               );
+               res.setHeader(
+                   'Content-Disposition',
+                   'attachment; filename="Vibration_History.xlsx"'
+               );
 
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        );
-        res.setHeader(
-            'Content-Disposition',
-            'attachment; filename="Vibration_History.xlsx"'
-        );
+               const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+               return res.end(buffer);
+           }
+       }
 
-        const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-        return res.end(buffer);
 
     }
     catch (err) {
@@ -63,6 +79,5 @@ CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
         return res.json({ success: false, message: "Trouble in Fetch Patient Vibration Details! Please contact support Team." })
     }
 });
-
 
 module.exports = CompressRouter;
