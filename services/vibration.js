@@ -21,7 +21,7 @@ cron.schedule("*/5 * * * * *", async () => {
         const patientId = Number(feed.field5);
 
         //OFF → stop recording
-        if (compressorStatus === 0) {
+        if (compressorStatus === 1) {
             if (isRecording) {
                 console.log("Recording stopped for patient:", activePatientId);
             }
@@ -31,7 +31,7 @@ cron.schedule("*/5 * * * * *", async () => {
         }
 
         //ON → start / continue recording
-        if (compressorStatus === 1) {
+        if (compressorStatus === 0) {
 
             const lastRecord = await Vibration
                 .findOne({})
@@ -66,7 +66,7 @@ cron.schedule("*/5 * * * * *", async () => {
             });
 
             await record.save();
-            console.log("Vitals saved for", activePatientId);
+            console.log("Vibration saved for", activePatientId);
         }
 
     } catch (err) {

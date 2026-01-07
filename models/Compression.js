@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const compressionSchema = mongoose.Schema({
     id: { type: Number, unique: true, required: true },
-    patientId: { type: String, required: true },
+    patientId: { type: Number, required: true },
     entries: [{
         temperature: { type: Number },
         airPressure: { type: Number },
