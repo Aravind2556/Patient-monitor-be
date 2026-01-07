@@ -12,6 +12,7 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
     try {
 
         const patientId = req.params.id
+        const isDownload = req.query.isDownload
 
         const fetchVibrationDetail = await VibrationModel.find({ patientId: patientId })
         // console.log("fetchVibrationDetail", fetchVibrationDetail)
@@ -44,10 +45,9 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
         if (req.session.user.role === 'patient')
             return res.json({ success: true, message: 'Patient Details fetched successfully!', patientVibration: finalVibrationHistory });
 
-
         //  Excel download
-        if (req.session.user.role === 'doctor') {
-            console.log("jhtognhtu")
+        if (isDownload === true || req.session.user.role === 'doctor') {
+            
             const worksheet = xlsx.utils.json_to_sheet(finalVibrationHistory);
             const workbook = xlsx.utils.book_new();
 
