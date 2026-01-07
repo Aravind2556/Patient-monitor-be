@@ -7,12 +7,12 @@ const DoctorRouter = express.Router();
 
 DoctorRouter.get('/doctor/patient-detail', isAuth, async (req, res) => {
     try {
+        console.log("called:",req.session.user)
         if (req.session.user.role !== 'doctor') {
             return res.json({ success: false, message: 'Access denied! Not a doctor account.' });
         }
-        const user = await PatientModel.find({ role: 'patient' });
+        const user = await PatientModel.find({ role: 'patient' });console.log("user:",user)
         if (!user)
-
             return res.json({ success: false, message: 'Patient Details not found!' });
 
         return res.json({ success: true, message: 'Patient Details fetched successfully!', patients: user });
