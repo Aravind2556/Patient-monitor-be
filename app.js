@@ -6,10 +6,8 @@ const AuthRouter = require('./routes/AuthRouter');
 const DoctorRouter = require('./routes/DoctorRouter')
 const CompressRouter = require('./routes/CompressRouter');
 const VibrationRouter = require('./routes/VibrationRouter');
+const HeatTherapyRouter = require('./routes/HeatTherpyRouter');
 
-require("./services/compressorService");
-require('./services/heatTherapy')
-require('./services/vibration')
 
 const MongoDbSession = require('connect-mongodb-session')(Session);
 require('dotenv').config();
@@ -52,4 +50,11 @@ app.use(Session({
 app.use(AuthRouter)
 app.use(DoctorRouter)
 app.use(CompressRouter)
+app.use(VibrationRouter)
+app.use(HeatTherapyRouter)
+
+const fetchLiveData = require('./services/fetchLiveData')
+setInterval(() => {
+    fetchLiveData.fetchThinkSpeakData()
+}, 5000);
 app.use(VibrationRouter)

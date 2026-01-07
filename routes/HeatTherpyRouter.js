@@ -1,13 +1,14 @@
 const express = require("express");
 const fetch = require("node-fetch");
-const Compression = require("../models/Compression");
+const HeatTherpy = require("../models/HeatTherapy");
 
-const CompressRouter = express.Router();
+const HeatTherapyRouter = express.Router();
 
-CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
+HeatTherapyRouter.get("/fetchheattherapy/:id", async (req, res) => {
     try {
         const patientId = req.params.id
-        const fetchVibrationDetail = await Compression.find({ patientId})
+        const fetchVibrationDetail = await HeatTherpy.find({ patientId })
+
         let finalVibrationHistory = fetchVibrationDetail.map(vibration => {
             const duration = Math.floor(
                 (new Date(vibration.updatedAt) - new Date(vibration.createdAt)) / (1000 * 60))
@@ -35,7 +36,7 @@ CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
             return res.json({ success: false, message: 'Patient Vibration not Found!' });
 
         if (req.session.user.role === 'patient')
-            return res.json({ success: true, message: 'Patient Details fetched successfully!', patientCompression: finalVibrationHistory });
+            return res.json({ success: true, message: 'Patient Details fetched successfully!', patientHeatTherpy: finalVibrationHistory });
 
 
         //  Excel download
@@ -65,4 +66,4 @@ CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
 });
 
 
-module.exports = CompressRouter;
+module.exports = HeatTherapyRouter;
