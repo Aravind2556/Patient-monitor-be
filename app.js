@@ -6,7 +6,7 @@ const AuthRouter = require('./routes/AuthRouter');
 const DoctorRouter = require('./routes/DoctorRouter')
 const CompressRouter = require('./routes/CompressRouter');
 const VibrationRouter = require('./routes/VibrationRouter');
-const HeatTherapyRouter = require('./routes/HeatTherpyRouter');
+const HeatTherapyRouter = require('./routes/HeatTherpyRouter'); 
 
 
 const MongoDbSession = require('connect-mongodb-session')(Session);
