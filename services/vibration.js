@@ -21,7 +21,7 @@ cron.schedule("*/5 * * * * *", async () => {
         const patientId = Number(feed.field5);
 
         //OFF → stop recording
-        if (vibrationStatus === 0) {
+        if (vibrationStatus === 1) {
             if (isRecording) {
                 console.log("Recording stopped for patient:", activePatientId);
             }
@@ -31,7 +31,7 @@ cron.schedule("*/5 * * * * *", async () => {
         }
 
         //ON → start / continue recording
-        if (vibrationStatus === 1) {
+        if (vibrationStatus === 0) {
 
             const lastRecord = await Vibration
                 .findOne({})

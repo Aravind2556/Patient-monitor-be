@@ -2,6 +2,7 @@ const express = require('express');
 const PatientModel = require('../models/User');
 const isAuth = require('../middleware/isAuth');
 const VibrationModel = require('../models/Vibration')
+const xlxs = require('xlsx')
 
 
 const VibrationRouter = express.Router();
@@ -28,10 +29,10 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
                 : 0;
             // console.log("avgTemp", avgTemp)
             return ({
-                sessionId: vibration.id,
-                date: vibration.updatedAt,
-                duration: duration,
-                averageTemp: avgTemp
+                SessionId: vibration.id,
+                Date: vibration.updatedAt,
+                Duration: duration,
+                AverageTemp: avgTemp
             })
         }
         )
@@ -42,9 +43,26 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
 
         if (req.session.user.role === 'patient')
             return res.json({ success: true, message: 'Patient Details fetched successfully!', patientVibration: finalVibrationHistory });
-        else {
+        
+        
+        //  Excel download
 
-        }
+        const worksheet = xlsx.utils.json_to_sheet(finalVibrationHistory);
+        const workbook = xlsx.utils.book_new();
+
+        xlsx.utils.book_append_sheet(workbook, worksheet, 'Vibration History');
+
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename="Vibration_History.xlsx"'
+        );
+
+        const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+        return res.end(buffer);
 
     }
     catch (err) {
