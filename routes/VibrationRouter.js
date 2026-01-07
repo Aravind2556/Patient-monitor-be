@@ -12,7 +12,8 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
     try {
 
         const patientId = req.params.id
-        const isDownload = req.query.isDownload
+        const { download } = req.query;
+        const role = req.session?.user?.role;
 
         const fetchVibrationDetail = await VibrationModel.find({ patientId: patientId })
         // console.log("fetchVibrationDetail", fetchVibrationDetail)
@@ -31,7 +32,7 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
             // console.log("avgTemp", avgTemp)
             return ({
                 SessionId: vibration.id,
-                Date: vibration.closedAt,
+                Date: vibration.updatedAt,
                 Duration: duration,
                 AverageTemp: avgTemp
             })
@@ -39,15 +40,16 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
         )
         // console.log("finalVibrationHistory", finalVibrationHistory)
 
-        if (!finalVibrationHistory)
+        if (finalVibrationHistory.length === 0)
             return res.json({ success: false, message: 'Patient Vibration not Found!' });
 
-        if (req.session.user.role === 'patient')
-            return res.json({ success: true, message: 'Patient Details fetched successfully!', patientVibration: finalVibrationHistory });
+        const wantsExcel = download === 'excel';
 
         //  Excel download
-        if (isDownload === true || req.session.user.role === 'doctor') {
-            
+        if (wantsExcel) {
+            if (!["patient", "doctor"].includes(role)) {
+                return res.status(403).json({ success: false, message: 'Not authorized to download compress data.' });
+            }
             const worksheet = xlsx.utils.json_to_sheet(finalVibrationHistory);
             const workbook = xlsx.utils.book_new();
 
@@ -65,6 +67,8 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
             const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
             return res.end(buffer);
         }
+        return res.json({ success: true, message: 'Patient Details fetched successfully!', patientVibration: finalVibrationHistory });
+
     }
     catch (err) {
         console.log("Trouble in Fetch Patient Vibration Details:", err)

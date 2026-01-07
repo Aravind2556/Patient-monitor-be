@@ -2,7 +2,7 @@ const express = require("express");
 const fetch = require("node-fetch");
 const xlsx = require("xlsx");
 const Compression = require("../models/Compression");
-const xlsx = require("xlsx");
+
 
 const CompressRouter = express.Router();
 
