@@ -5,9 +5,6 @@ const Session = require('express-session');
 const AuthRouter = require('./routes/AuthRouter');
 const DoctorRouter = require('./routes/DoctorRouter')
 const CompressRouter = require('./routes/CompressRouter');
-require("./services/compressorService");
-require('./services/heatTherapy')
-require('./services/vibration')
 
 const MongoDbSession = require('connect-mongodb-session')(Session);
 require('dotenv').config();
@@ -50,3 +47,8 @@ app.use(Session({
 app.use(AuthRouter)
 app.use(DoctorRouter)
 app.use(CompressRouter)
+
+const fetchLiveData = require('./services/fetchLiveData')
+setInterval(() => {
+    fetchLiveData.fetchThinkSpeakData()
+}, 5000);
