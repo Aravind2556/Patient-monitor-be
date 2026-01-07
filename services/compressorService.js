@@ -21,17 +21,17 @@ cron.schedule("*/5 * * * * *", async () => {
         const patientId = Number(feed.field5);
 
         //OFF → stop recording
-        if (compressorStatus === 1) {
+        if (compressorStatus === 0) {
             if (isRecording) {
                 console.log("Recording stopped for patient:", activePatientId);
             }
-            isRecording = false;
+           
             activePatientId = null;
             return;
         }
 
         //ON → start / continue recording
-        if (compressorStatus === 0) {
+        if (compressorStatus === 1) {
 
             // 🔹 Get last session id (FAST & SAFE)
             const lastRecord = await Compression
@@ -42,7 +42,7 @@ cron.schedule("*/5 * * * * *", async () => {
 
             // 🆕 NEW SESSION (first ON after OFF)
             if (!isRecording) {
-                isRecording = true;
+               
                 activePatientId = patientId;
 
                 await Compression.create({
