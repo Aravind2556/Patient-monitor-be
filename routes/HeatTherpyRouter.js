@@ -38,25 +38,26 @@ HeatTherapyRouter.get("/fetchheattherapy/:id", async (req, res) => {
         if (req.session.user.role === 'patient')
             return res.json({ success: true, message: 'Patient Details fetched successfully!', patientHeatTherpy: finalVibrationHistory });
 
-
         //  Excel download
+        if (["patient", 'doctor'].includes(req.session.user.role)) {
+            console.log("jhtognhtu")
+            const worksheet = xlsx.utils.json_to_sheet(finalVibrationHistory);
+            const workbook = xlsx.utils.book_new();
 
-        const worksheet = xlsx.utils.json_to_sheet(finalVibrationHistory);
-        const workbook = xlsx.utils.book_new();
+            xlsx.utils.book_append_sheet(workbook, worksheet, 'Vibration History');
 
-        xlsx.utils.book_append_sheet(workbook, worksheet, 'Vibration History');
+            res.setHeader(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            );
+            res.setHeader(
+                'Content-Disposition',
+                'attachment; filename="Vibration_History.xlsx"'
+            );
 
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        );
-        res.setHeader(
-            'Content-Disposition',
-            'attachment; filename="Vibration_History.xlsx"'
-        );
-
-        const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-        return res.end(buffer);
+            const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+            return res.end(buffer);
+        }
 
     }
     catch (err) {
