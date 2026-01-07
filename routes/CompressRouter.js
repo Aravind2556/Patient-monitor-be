@@ -6,13 +6,21 @@ const CompressRouter = express.Router();
 
 CompressRouter.get("/compressor", async (req, res) => {
     try {
-        const allCompression = await Compression.find({})
-        console.log("allCompression", allCompression)
-    
+        const allCompression = await Compression.find({});
+        console.log("allCompression", allCompression);
+        return res.status(200).json({
+            success: true,
+            data: allCompression
+        });
     } catch (err) {
         console.error("Compressor API error:", err);
-        res.status(500).json({ message: "Server error" });
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: err.message
+        });
     }
 });
+
 
 module.exports = CompressRouter;

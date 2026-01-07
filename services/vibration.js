@@ -66,7 +66,7 @@ cron.schedule("*/5 * * * * *", async () => {
             });
 
             await record.save();
-            console.log("Vitals saved for", activePatientId);
+            console.log("Vibration saved for", activePatientId);
         }
 
     } catch (err) {
