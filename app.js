@@ -5,6 +5,8 @@ const Session = require('express-session');
 const AuthRouter = require('./routes/AuthRouter');
 const DoctorRouter = require('./routes/DoctorRouter')
 const CompressRouter = require('./routes/CompressRouter');
+const VibrationRouter = require('./routes/VibrationRouter');
+
 
 const MongoDbSession = require('connect-mongodb-session')(Session);
 require('dotenv').config();
@@ -20,7 +22,7 @@ app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`); 
+    console.log(`Server is running on port ${port}`);
 })
 
 Mongoose.connect(process.env.MongoDBURI)
@@ -52,3 +54,4 @@ const fetchLiveData = require('./services/fetchLiveData')
 setInterval(() => {
     fetchLiveData.fetchThinkSpeakData()
 }, 5000);
+app.use(VibrationRouter)
