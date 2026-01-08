@@ -40,7 +40,7 @@ VibrationRouter.get('/fetchVibration/:id', isAuth, async (req, res) => {
         )
         // console.log("finalVibrationHistory", finalVibrationHistory)
 
-        if (finalVibrationHistory.length === 0)
+        if (!finalVibrationHistory)
             return res.json({ success: false, message: 'Patient Vibration not Found!' });
 
         const wantsExcel = download === 'excel';

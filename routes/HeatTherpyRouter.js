@@ -31,7 +31,7 @@ HeatTherapyRouter.get("/fetchheattherapy/:id", async (req, res) => {
             };
         });
 
-        if (finalHeatHistory.length === 0) {
+        if (!finalHeatHistory) {
             return res.json({ success: false, message: 'Patient Heat Therapy not Found!', patientHeatTherpy: [] });
         }
 

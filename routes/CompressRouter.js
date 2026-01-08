@@ -33,8 +33,8 @@ CompressRouter.get("/fetchcompressor/:id", async (req, res) => {
             };
         });
 
-        if (finalHeatHistory.length === 0) {
-            return res.json({ success: false, message: 'Patient Compress not Found!', patientHeatTherpy: [] });
+        if (!finalHeatHistory) {
+            return res.json({ success: false, message: 'Patient Compress not Found!', patientCompression: [] });
         }
 
         const wantsExcel = download === 'excel';
