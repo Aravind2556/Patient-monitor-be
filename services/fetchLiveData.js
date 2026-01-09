@@ -27,6 +27,8 @@ const fetchThinkSpeakData = async () => {
         const res = await fetch(ThinkSpeakURL);
         const data = await res.json();
 
+        if(!data?.feeds?.length) return
+
         for (let entry of data.feeds) {
             const currentCompressStatus = entry.field6?.match(/\d+/) ? Number(entry.field6) : null;
             const currentHeatStatus = entry.field7?.match(/\d+/) ? Number(entry.field7) : null;
