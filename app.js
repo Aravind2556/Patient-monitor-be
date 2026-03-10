@@ -7,16 +7,17 @@ const DoctorRouter = require('./routes/DoctorRouter')
 const CompressRouter = require('./routes/CompressRouter');
 const VibrationRouter = require('./routes/VibrationRouter');
 const HeatTherapyRouter = require('./routes/HeatTherpyRouter'); 
+const AIMLRouter = require('./routes/AIMLRouter')
 
-
-const MongoDbSession = require('connect-mongodb-session')(Session);
+ 
+const MongoDbSession = require('connect-mongodb-session')(Session); 
 require('dotenv').config();
 
 const app = Express();
 const port = process.env.Port || 4200;
 
 app.use(cors({
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000','http://localhost:8000','http://127.0.0.1:8000'],
     credentials: true
 }));
 app.use(Express.json());
@@ -34,6 +35,8 @@ Mongoose.connect(process.env.MongoDBURI)
         console.log("Error in connecting to MongoDB:", err);
     })
 
+    
+
 const store = new MongoDbSession({
     uri: process.env.MongoDBURI,
     collection: 'sessions'
@@ -44,7 +47,6 @@ app.use(Session({
     resave: false,
     saveUninitialized: false,
     store: store,
-
 }))
 
 app.use(AuthRouter)
@@ -52,9 +54,11 @@ app.use(DoctorRouter)
 app.use(CompressRouter)
 app.use(VibrationRouter)
 app.use(HeatTherapyRouter)
+ app.use(AIMLRouter) 
+
 
 const fetchLiveData = require('./services/fetchLiveData')
 setInterval(() => {
     fetchLiveData.fetchThinkSpeakData()
-}, 5000);
-app.use(VibrationRouter)
+}, 15000);
+app.use(VibrationRouter)   
